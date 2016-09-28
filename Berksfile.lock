@@ -1,0 +1,7 @@
+DEPENDENCIES
+  chip-audio
+    path: .
+    metadata: true
+
+GRAPH
+  chip-audio (0.1.0)
