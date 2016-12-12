@@ -17,54 +17,24 @@
 # limitations under the License.
 #
 
-# create user and group
-group node['chip-audio']['airplay']['shairport']['group'] do
-  action :create
-end
-
-user node['chip-audio']['airplay']['shairport']['user'] do
-  comment 'Shairport User'
-  gid node['chip-audio']['airplay']['shairport']['group']
-  shell '/usr/sbin/nologin'
-end
-
 #<> install additional packages
 node['chip-audio']['airplay']['packages'].each do |p|
   package p
 end
 
-# checkout from github
-git '/tmp/shairport' do
-  repository node['chip-audio']['airplay']['shairport']['url']
-  revision 'master'
-  action :sync
-  notifies :run, 'execute[configure shairport]', :immediately
-end
+include_recipe 'chip-audio::_user'
+include_recipe 'chip-audio::_compile'
 
-execute 'configure shairport' do
-  creates '/tmp/shairport/config.status'
-  cwd '/tmp/shairport'
-  command 'autoreconf -i -f && \
-           ./configure --with-alsa \
-                       --with-avahi \
-                       --with-ssl=openssl \
-                       --with-metadata \
-                       --with-soxr \
-                       --with-systemd'
-  action :nothing
-  notifies :run, 'execute[compile shairport]', :immediately
-end
-
-execute 'compile shairport' do
-  creates '/usr/local/bin/shairport-sync'
-  cwd '/tmp/shairport'
-  command 'make && make install'
-  action :nothing
-end
-
+#<> drop config
 template '/etc/shairport-sync.conf' do
   source 'shairport-sync.conf.erb'
   owner 'root'
   group 'root'
   mode '0744'
+end
+
+#<> enable service
+service 'shairport-sync' do
+  supports :status => true, :restart => true, :reload => false
+  action [:enable, :start]
 end

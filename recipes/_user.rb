@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: chip-audio
-# Attributes:: default
+# Recipe:: user
 #
 # Copyright (C) 2016 wschiffels@users.noreply.github.com
 #
@@ -17,22 +17,20 @@
 # limitations under the License.
 #
 
-default['chip-audio']['airplay']['packages'] = %w(
-  avahi-daemon
-  git
-  autoconf
-  libtool
-  libdaemon-dev
-  libasound2-dev
-  libpopt-dev
-  libconfig-dev
-  libavahi-client-dev
-  libssl-dev
-  libsoxr-dev
-)
+# create user and group
+group node['chip-audio']['airplay']['shairport']['group'] do
+  action :create
+end
 
-default['chip-audio']['airplay']['shairport']['url'] = 'https://github.com/mikebrady/shairport-sync'
-default['chip-audio']['airplay']['shairport']['user'] = 'shairport-sync'
-default['chip-audio']['airplay']['shairport']['group'] = 'shairport-sync'
-default['chip-audio']['airplay']['interpolation'] = 'soxr'
-default['chip-audio']['airplay']['output_device'] = 'hw:0'
+user node['chip-audio']['airplay']['shairport']['user'] do
+  comment 'Shairport User'
+  gid node['chip-audio']['airplay']['shairport']['group']
+  shell '/usr/sbin/nologin'
+end
+
+# add user to audio
+group 'audio' do
+  action :modify
+  members node['chip-audio']['airplay']['shairport']['user']
+  append true
+end

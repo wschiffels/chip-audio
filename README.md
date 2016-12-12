@@ -3,7 +3,7 @@
 Playing around with [C.H.I.P](https://getchip.com/), [Chef](https://www.chef.io/) and
 [knife-solo](https://matschaffer.github.io/knife-solo/).
 
-As for Airplay: It's copy & paste from https://chip.hackster.io/11798/c-h-i-p-play-speakers-7cebb9
+As for Airplay: It's copy & paste from [chip.hackster.io](https://chip.hackster.io/11798/c-h-i-p-play-speakers-7cebb9)
 
 
 ```bash
@@ -59,18 +59,28 @@ ws: ~ $ knife solo cook root@<chip ip>
 
 * `node['chip-audio']['airplay']['packages']` -  Defaults to `%w(`.
 * `node['chip-audio']['airplay']['shairport']['url']` -  Defaults to `https://github.com/mikebrady/shairport-sync`.
-* `node['chip-audio']['airplay']['shairport']['user']` -  Defaults to `shairport`.
-* `node['chip-audio']['airplay']['shairport']['group']` -  Defaults to `shairport`.
+* `node['chip-audio']['airplay']['shairport']['user']` -  Defaults to `shairport-sync`.
+* `node['chip-audio']['airplay']['shairport']['group']` -  Defaults to `shairport-sync`.
 * `node['chip-audio']['airplay']['interpolation']` -  Defaults to `soxr`.
 * `node['chip-audio']['airplay']['output_device']` -  Defaults to `hw:0`.
 
 # Recipes
 
 * [chip-audio::airplay](#chip-audioairplay) - Installs/configures airplay for chip
+* chip-audio::_user - creates user for shairplay
+* [chip-audio::_compile](#chip-audio_compile) - downloads and compiles shairplay
 
 ## chip-audio::airplay
 
 install additional packages
+drop config
+enable service
+
+## chip-audio::_compile
+
+checkout sources from github
+configure for systemd
+compile & install
 
 # License and Maintainer
 
